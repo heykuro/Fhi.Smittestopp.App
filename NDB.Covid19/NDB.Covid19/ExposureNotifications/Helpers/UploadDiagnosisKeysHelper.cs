@@ -53,6 +53,12 @@ namespace NDB.Covid19.ExposureNotifications.Helpers
             return tek.RollingDuration.TotalMinutes <= 0 || tek.RollingDuration.TotalMinutes > 1440;
         }
 
+        public static List<ExposureKeyModel> RemoveKeysOlderThanMaxNumberOfDays(IEnumerable<ExposureKeyModel> keys, int maxNumberOfDays)
+        {
+            DateTime maxNumberOfDaysAgoDate = SystemTime.Now().Date.AddDays(-maxNumberOfDays);
+            return keys.Where(key => key.RollingStart.Date > maxNumberOfDaysAgoDate).ToList();
+        }
+
         /// <summary>
         /// This method is used to set TransmissionRiskLevel before keys are sent to server.
         /// It operates on intervals that are set in configuration file, these intervals are defined strictly, without any overlaps.

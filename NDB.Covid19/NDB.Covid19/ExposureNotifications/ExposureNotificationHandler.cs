@@ -116,11 +116,12 @@ namespace NDB.Covid19.ExposureNotifications
             DateTime MiBaDateAsUniversalTime = MiBaDate.Value.ToUniversalTime();
 
             List<ExposureKeyModel> validKeys = UploadDiagnosisKeysHelper.CreateAValidListOfTemporaryExposureKeys(temporaryExposureKeys);
+            List<ExposureKeyModel> validKeysNewerThanTenDays = UploadDiagnosisKeysHelper.RemoveKeysOlderThanMaxNumberOfDays(validKeys, Configuration.Conf.MAXIMUM_DAYS_SINCE_EXPOSURE);
 
             // Here all keys are extended with DaysSinceOnsetOfSymptoms value
-            validKeys = UploadDiagnosisKeysHelper.SetTransmissionRiskLevel(validKeys, MiBaDateAsUniversalTime);
+            validKeysNewerThanTenDays = UploadDiagnosisKeysHelper.SetTransmissionRiskLevel(validKeys, MiBaDateAsUniversalTime);
 
-            bool success = await exposureNotificationWebService.PostSelfExposureKeys(validKeys);
+            bool success = await exposureNotificationWebService.PostSelfExposureKeys(validKeysNewerThanTenDays);
             if (!success)
             {
                 throw new FailedToPushToServerException("Failed to push keys to the server");

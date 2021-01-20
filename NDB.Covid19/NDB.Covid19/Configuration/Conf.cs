@@ -69,6 +69,9 @@ namespace NDB.Covid19.Configuration
             Tuple.Create(11, 12)                      // For array index 8
         };
 
+        // Maximum number of days old key can be to be uploaded to server
+        public static readonly int MAXIMUM_DAYS_SINCE_EXPOSURE = 10;
+
         // Parameters for setting meaningful attenuation bucket weights
         // Multiplier (weight) of each minute in the low attenuation bucket
         public static readonly double LOW_ATTENUATION_DURATION_MULTIPLIER = 1.0;

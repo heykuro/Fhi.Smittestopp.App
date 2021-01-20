@@ -89,6 +89,25 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
             }
         }
 
+        [Fact]
+        public void RemoveKeysOlderThanMaxNumberOfDays_KeysOlderThanTenDaysAreRemoved()
+        {
+            DateTime today = SystemTime.Now();
+            DateTime tenDaysAgo = today.AddDays(-10);
+            IEnumerable<ExposureKeyModel> temporaryExposureKeys = new List<ExposureKeyModel>();
+            for (int i = 0; i < 15; i++)
+            {
+                temporaryExposureKeys = temporaryExposureKeys.Append(new ExposureKeyModel(new byte[i + 1], today.AddDays(-i), TimeSpan.FromDays(1), RiskLevel.Medium));
+            }
+
+            List<ExposureKeyModel> processedKeys = UploadDiagnosisKeysHelper.RemoveKeysOlderThanMaxNumberOfDays(temporaryExposureKeys, 10);
+
+            foreach (ExposureKeyModel tek in processedKeys)
+            {
+                Assert.True(tek.RollingStart > tenDaysAgo);
+            }
+        }
+
         // True iff. container contains a key with same value as the given tek. Not looking at object addresses
         private bool ContainsTek(ExposureKeyModel tek, IEnumerable<ExposureKeyModel> teks)
         {
