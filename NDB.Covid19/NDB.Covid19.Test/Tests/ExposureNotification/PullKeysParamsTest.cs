@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using CommonServiceLocator;
+using NDB.Covid19.Configuration;
 using NDB.Covid19.Enums;
 using NDB.Covid19.ExposureNotifications.Helpers;
 using NDB.Covid19.Interfaces;
@@ -140,8 +141,8 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
             //When the app pulls
             PullKeysParams pullParams = PullKeysParams.GenerateParams();
 
-            //Then it pulls only for the last 14 days, incl. today.
-            Assert.Equal(SystemTime.Now().AddDays(-13).Date, pullParams.Date);
+            //Then it pulls only for the last max days, incl. today.
+            Assert.Equal(SystemTime.Now().AddDays(-(Conf.MAXIMUM_DAYS_SINCE_EXPOSURE - 1)).Date, pullParams.Date);
             Assert.Equal(1, pullParams.BatchNumber);
             Assert.Equal(BatchType.NO, pullParams.BatchType);
 

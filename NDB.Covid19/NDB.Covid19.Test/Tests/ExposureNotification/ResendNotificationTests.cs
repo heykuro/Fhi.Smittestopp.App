@@ -69,13 +69,13 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
         [InlineData(4, -1, true, true)] // Before upper bound
         [InlineData(4, 0, true, true)] // Equal upper bound
         [InlineData(4, 1, false, true)] // After upper bound
-        // Older than 14 days
-        [InlineData(14, -1, false)] // Before lower bound
-        [InlineData(14, 0, false)] // Equal lower bound
-        [InlineData(14, 1, false)] // After lower bound
-        [InlineData(14, -1, false, true)] // Before upper bound
-        [InlineData(14, 0, false, true)] // Equal upper bound
-        [InlineData(14, 1, false, true)] // After upper bound
+        // Older than 10 days
+        [InlineData(10, -1, false)] // Before lower bound
+        [InlineData(10, 0, false)] // Equal lower bound
+        [InlineData(10, 1, false)] // After lower bound
+        [InlineData(10, -1, false, true)] // Before upper bound
+        [InlineData(10, 0, false, true)] // Equal upper bound
+        [InlineData(10, 1, false, true)] // After upper bound
         public async void ShouldUpdateLastMessageDate(
             int daysOfTimeShift,
             int minutesOfTimeShift,

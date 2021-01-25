@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using CommonServiceLocator;
+using NDB.Covid19.Configuration;
 using NDB.Covid19.Enums;
 using NDB.Covid19.ExposureNotifications.Helpers;
 using NDB.Covid19.ExposureNotifications.Helpers.FetchExposureKeys;
@@ -535,8 +536,8 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
             //When pulling keys
             List<string> zipLocations = (await new ZipDownloader().PullNewKeys(mockedService, new CancellationToken())).ToList();
 
-            //Then only pull the last 14 days' keys
-            Assert.Equal(14*3, zipLocations.Count);
+            //Then only pull the last maximum days' keys
+            Assert.Equal(Conf.MAXIMUM_DAYS_SINCE_EXPOSURE * 3, zipLocations.Count);
             Assert.Equal(3, LocalPreferencesHelper.LastPullKeysBatchNumberNotSubmitted); //The last batch number is saved from header
             Assert.False((await _logManager.GetLogs(10)).Any()); //And no errors were logged
         }
@@ -561,7 +562,7 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
             // Update local preferenced Last pull suceeded time to simulate successful submission to EN API
             LocalPreferencesHelper.UpdateLastPullKeysSucceededDateTime();
 
-            //Keys exist for more than 14 days back and there are gaps
+            //Keys exist for more than maximum days back and there are gaps
             ExposureNotificationWebService mockedService2 = _helper.MockedService(SixteenDaysOfKeysWithGaps());
 
             //Given today is day4
@@ -570,8 +571,8 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
             //When pulling keys
             List<string> zipLocations2 = (await new ZipDownloader().PullNewKeys(mockedService2, new CancellationToken())).ToList();
 
-            //Then only pull the last 14 days' keys
-            Assert.Equal(14 * 3 / 2, zipLocations2.Count);
+            //Then only pull the last maximum days' keys
+            Assert.Equal(Conf.MAXIMUM_DAYS_SINCE_EXPOSURE * 3 / 2, zipLocations2.Count);
             Assert.Equal(3, LocalPreferencesHelper.LastPullKeysBatchNumberNotSubmitted); //The last batch number is saved from header
             Assert.False((await _logManager.GetLogs(10)).Any()); //And no errors were logged
         }

@@ -76,7 +76,7 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
 
         private void AssertPositiveDaysTEKS(List<ExposureKeyModel> resultKeys)
         {
-            for (int i = 1; i < resultKeys.Count; i++)
+            for (int i = 0; i < resultKeys.Count; i++)
             {
                 if (i == 0)
                 {
@@ -107,11 +107,11 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
 
         private void AssertNegativeDaysTEKS(List<ExposureKeyModel> resultKeysNegativeDifference)
         {
-            for (int i = 1; i < resultKeysNegativeDifference.Count; i++)
+            for (int i = 0; i < resultKeysNegativeDifference.Count; i++)
             {
                 if (i == 0)
                 {
-                    Assert.Equal("MediumLow", resultKeysNegativeDifference[i].TransmissionRiskLevel.ToString());
+                    Assert.Equal("Lowest", resultKeysNegativeDifference[i].TransmissionRiskLevel.ToString());
                 }
 
                 if (i == 1)
@@ -121,7 +121,7 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
 
                 if (i == 2)
                 {
-                    Assert.Equal("Lowest", resultKeysNegativeDifference[i].TransmissionRiskLevel.ToString());
+                    Assert.Equal("MediumLow", resultKeysNegativeDifference[i].TransmissionRiskLevel.ToString());
                 }
             }
         }

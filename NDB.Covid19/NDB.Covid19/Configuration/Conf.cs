@@ -29,8 +29,11 @@ namespace NDB.Covid19.Configuration
         public static string DEFAULT_LANGUAGE = "nb"; //In case the device is set to use an unsupported language
         public static string[] SUPPORTED_LANGUAGES = new string[] { "en", "nb", "nn" }; // TODO
 
+        // Maximum number of days old key can be to be uploaded to server
+        public static readonly int MAXIMUM_DAYS_SINCE_EXPOSURE = 10;
+
         public static int MESSAGE_RETENTION_TIME_IN_MINUTES_SHORT => 15; 
-        public static int MESSAGE_RETENTION_TIME_IN_MINUTES_LONG => 14 * 24 * 60;
+        public static int MESSAGE_RETENTION_TIME_IN_MINUTES_LONG => MAXIMUM_DAYS_SINCE_EXPOSURE * 24 * 60;
         public static int MAX_MESSAGE_RETENTION_TIME_IN_MINUTES = MESSAGE_RETENTION_TIME_IN_MINUTES_LONG;
         public static int HOURS_UNTIL_RESEND_MESSAGES = 48;
         public static int HOUR_WHEN_MESSAGE_SHOULD_BE_RESEND_BEGIN = 8;
@@ -68,9 +71,6 @@ namespace NDB.Covid19.Configuration
             Tuple.Create(9, 10),                      // For array index 7
             Tuple.Create(11, 12)                      // For array index 8
         };
-
-        // Maximum number of days old key can be to be uploaded to server
-        public static readonly int MAXIMUM_DAYS_SINCE_EXPOSURE = 10;
 
         // Parameters for setting meaningful attenuation bucket weights
         // Multiplier (weight) of each minute in the low attenuation bucket

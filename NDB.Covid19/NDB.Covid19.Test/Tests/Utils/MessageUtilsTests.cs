@@ -49,7 +49,7 @@ namespace NDB.Covid19.Test.Tests.Utils
                 {
                     IsRead = false,
                     MessageLink = "https://www.netcompany.com",
-                    TimeStamp = SystemTime.Now().Subtract(TimeSpan.FromDays(15)),
+                    TimeStamp = SystemTime.Now().Subtract(TimeSpan.FromDays(11)),
                     Title = "Du har opholdt dig på tæt afstand af en COVID - 19 positiv"
                 };
 

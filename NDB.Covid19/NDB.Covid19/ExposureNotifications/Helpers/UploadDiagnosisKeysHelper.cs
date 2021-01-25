@@ -24,13 +24,13 @@ namespace NDB.Covid19.ExposureNotifications.Helpers
         /// <returns></returns>
         public static List<ExposureKeyModel> CreateAValidListOfTemporaryExposureKeys(IEnumerable<ExposureKeyModel> temporaryExposureKeys)
         {
-            List<ExposureKeyModel> validListOfTeks = temporaryExposureKeys.ToList();
-            foreach (ExposureKeyModel tek in validListOfTeks)
+            List<ExposureKeyModel> validListOfTeks = new List<ExposureKeyModel>();
+            List<ExposureKeyModel> temporaryExposureKeysList = temporaryExposureKeys.ToList();
+            foreach (ExposureKeyModel tek in temporaryExposureKeysList)
             {
-                // Removes keys that exceeds the 14 day period, to satisfy criterion 1
+                // Ignores keys that exceeds the 14 day period, to satisfy criterion 1
                 if (TekHasInvalidRollingStart(tek))
                 {
-                    validListOfTeks.Remove(tek);
                     continue;
                 }
 
@@ -39,13 +39,15 @@ namespace NDB.Covid19.ExposureNotifications.Helpers
                 {
                     tek.RollingDuration = new TimeSpan(1, 0, 0, 0);
                 }
+
+                validListOfTeks.Add(tek);
             }
             return validListOfTeks;
         }
 
         private static bool TekHasInvalidRollingStart(ExposureKeyModel tek) 
         {
-            return tek.RollingStart.Date < SystemTime.Now().Date.AddDays(-14) || tek.RollingStart.Date > SystemTime.Now().Date;
+            return tek.RollingStart.Date < SystemTime.Now().AddDays(-14).Date || tek.RollingStart.Date > SystemTime.Now().Date;
         }
 
         private static bool TekHasInvalidRollingDuration(ExposureKeyModel tek)
@@ -55,7 +57,7 @@ namespace NDB.Covid19.ExposureNotifications.Helpers
 
         public static List<ExposureKeyModel> RemoveKeysOlderThanMaxNumberOfDays(IEnumerable<ExposureKeyModel> keys, int maxNumberOfDays)
         {
-            DateTime maxNumberOfDaysAgoDate = SystemTime.Now().Date.AddDays(-maxNumberOfDays);
+            DateTime maxNumberOfDaysAgoDate = SystemTime.Now().AddDays(-maxNumberOfDays).Date;
             return keys.Where(key => key.RollingStart.Date > maxNumberOfDaysAgoDate).ToList();
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NDB.Covid19.Configuration;
 using NDB.Covid19.ExposureNotifications.Helpers;
 using NDB.Covid19.Models;
 using Xamarin.ExposureNotifications;
@@ -19,8 +20,9 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
         private readonly DateTimeOffset june1 = DateTimeOffset.FromUnixTimeSeconds(1590969600);
 
         [Fact]
-        public void createAValidListOfTemporaryExposureKeys_HaveMultipleWithSameDate_OnlyOneWithEachDateShouldBeKept()
+        public void createAValidListOfTemporaryExposureKeys_HaveMultipleWithSameDate_AllShouldBeKept()
         {
+            SystemTime.SetDateTime(june1.AddDays(1).UtcDateTime);
             // Create keys
             ExposureKeyModel tek1 = new ExposureKeyModel(new byte[1], june1, TimeSpan.FromDays(1), RiskLevel.Medium);
             ExposureKeyModel tek2 = new ExposureKeyModel(new byte[2], june1, TimeSpan.FromDays(1), RiskLevel.Medium);
@@ -31,14 +33,17 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
             IEnumerable<ExposureKeyModel> processedKeys = UploadDiagnosisKeysHelper.CreateAValidListOfTemporaryExposureKeys(temporaryExposureKeys);
 
             // The only difference should be that tek2 is not contained in the result
-            Assert.Equal(2, processedKeys.Count());
+            Assert.Equal(3, processedKeys.Count());
             Assert.True(ContainsTek(tek1, processedKeys));
             Assert.True(ContainsTek(tek3, processedKeys));
+
+            SystemTime.ResetDateTime();
         }
 
         [Fact]
-        public void createAValidListOfTemporaryExposureKeys_HaveDateGap_OnlyNewestShouldBeKept()
+        public void createAValidListOfTemporaryExposureKeys_HaveDateGap_AllShouldBeKept()
         {
+            SystemTime.SetDateTime(june1.AddDays(4).UtcDateTime);
             // Create keys
             ExposureKeyModel tek1 = new ExposureKeyModel(new byte[1], june1, TimeSpan.FromDays(1), RiskLevel.Medium);
             ExposureKeyModel tek2 = new ExposureKeyModel(new byte[2], june1.AddDays(1), TimeSpan.FromDays(1), RiskLevel.Medium);
@@ -49,13 +54,15 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
             IEnumerable<ExposureKeyModel> processedKeys = UploadDiagnosisKeysHelper.CreateAValidListOfTemporaryExposureKeys(temporaryExposureKeys);
 
             // Only tek3 should be left
-            Assert.Single(processedKeys);
-            Assert.True(ContainsTek(tek3, processedKeys));
+            Assert.Equal(3, processedKeys.Count());
+
+            SystemTime.ResetDateTime();
         }
 
         [Fact]
         public void createAValidListOfTemporaryExposureKeys_Have15Keys_Only14ShouldBeKept()
         {
+            SystemTime.SetDateTime(june1.AddDays(15).UtcDateTime);
             // Create a list of 15 keys
             IEnumerable<ExposureKeyModel> temporaryExposureKeys = new List<ExposureKeyModel>();
             for (int i = 0; i < 15; i++)
@@ -68,6 +75,8 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
 
             // There should be 14 left
             Assert.Equal(14, processedKeys.Count());
+
+            SystemTime.ResetDateTime();
         }
 
         [Fact]
@@ -90,21 +99,21 @@ namespace NDB.Covid19.Test.Tests.ExposureNotification
         }
 
         [Fact]
-        public void RemoveKeysOlderThanMaxNumberOfDays_KeysOlderThanTenDaysAreRemoved()
+        public void RemoveKeysOlderThanMaxNumberOfDays_KeysOlderThanMaxDaysAreRemoved()
         {
             DateTime today = SystemTime.Now();
-            DateTime tenDaysAgo = today.AddDays(-10);
+            DateTime maxDaysAgo = today.AddDays(-Conf.MAXIMUM_DAYS_SINCE_EXPOSURE);
             IEnumerable<ExposureKeyModel> temporaryExposureKeys = new List<ExposureKeyModel>();
             for (int i = 0; i < 15; i++)
             {
                 temporaryExposureKeys = temporaryExposureKeys.Append(new ExposureKeyModel(new byte[i + 1], today.AddDays(-i), TimeSpan.FromDays(1), RiskLevel.Medium));
             }
 
-            List<ExposureKeyModel> processedKeys = UploadDiagnosisKeysHelper.RemoveKeysOlderThanMaxNumberOfDays(temporaryExposureKeys, 10);
+            List<ExposureKeyModel> processedKeys = UploadDiagnosisKeysHelper.RemoveKeysOlderThanMaxNumberOfDays(temporaryExposureKeys, Conf.MAXIMUM_DAYS_SINCE_EXPOSURE);
 
             foreach (ExposureKeyModel tek in processedKeys)
             {
-                Assert.True(tek.RollingStart > tenDaysAgo);
+                Assert.True(tek.RollingStart > maxDaysAgo);
             }
         }
 
