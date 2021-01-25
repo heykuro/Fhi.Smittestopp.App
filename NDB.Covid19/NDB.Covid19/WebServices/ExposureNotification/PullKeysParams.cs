@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using NDB.Covid19.Configuration;
 using NDB.Covid19.Enums;
 using NDB.Covid19.ExposureNotifications.Helpers;
 using NDB.Covid19.PersistedData;
@@ -51,10 +52,10 @@ namespace NDB.Covid19.WebServices.ExposureNotification
             int num = LocalPreferencesHelper.LastPullKeysBatchNumberSuccessfullySubmitted;
             num += 1;
 
-            //If more than 14 days ago, then only pull for 14 days
-            if (lastPullDate.Date <= today.AddDays(-14))
+            //If more than max days ago, then only pull for max days
+            if (lastPullDate.Date <= today.AddDays(-Conf.MAXIMUM_DAYS_SINCE_EXPOSURE))
             {
-                lastPullDate = today.AddDays(-13);
+                lastPullDate = today.AddDays(-(Conf.MAXIMUM_DAYS_SINCE_EXPOSURE - 1));
                 num = 1;
             }
 
