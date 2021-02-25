@@ -266,6 +266,8 @@ namespace NDB.Covid19.PersistedData
                 get => _preferences.Get(PreferencesKeys.APP_DATA_SMITTESTOP_DOWNLOADS_TOTAL_PREF, 0);
                 set => _preferences.Set(PreferencesKeys.APP_DATA_SMITTESTOP_DOWNLOADS_TOTAL_PREF, value);
             }
+        }
+
         public static bool DidFirstFileOfTheDayEndedWith204
         {
             get => _preferences.Get(PreferencesKeys.FETCHING_ACROSS_DATES_204_FIRST_BATCH, false);
