@@ -133,7 +133,13 @@ namespace NDB.Covid19.PersistedData
             get => _preferences.Get(PreferencesKeys.LAST_PERMISSIONS_NOTIFICATION_DATE_TIME, DateTime.MinValue);
             set => _preferences.Set(PreferencesKeys.LAST_PERMISSIONS_NOTIFICATION_DATE_TIME, value);
         }
-        
+
+        public static DateTime LastNTPUtcDateTime
+        {
+            get => _preferences.Get(PreferencesKeys.LAST_NTP_UTC_DATE_TIME, Conf.DATE_TIME_REPLACEMENT);
+            set => _preferences.Set(PreferencesKeys.LAST_NTP_UTC_DATE_TIME, value);
+        }
+
         public static bool AreCountryConsentsGiven
         {
             get => _preferences.Get(PreferencesKeys.COUNTRY_CONSENTS_GIVEN, false);
@@ -260,6 +266,10 @@ namespace NDB.Covid19.PersistedData
                 get => _preferences.Get(PreferencesKeys.APP_DATA_SMITTESTOP_DOWNLOADS_TOTAL_PREF, 0);
                 set => _preferences.Set(PreferencesKeys.APP_DATA_SMITTESTOP_DOWNLOADS_TOTAL_PREF, value);
             }
+        public static bool DidFirstFileOfTheDayEndedWith204
+        {
+            get => _preferences.Get(PreferencesKeys.FETCHING_ACROSS_DATES_204_FIRST_BATCH, false);
+            set => _preferences.Set(PreferencesKeys.FETCHING_ACROSS_DATES_204_FIRST_BATCH, value);
         }
     }
 }
